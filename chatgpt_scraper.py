@@ -173,13 +173,22 @@ class ChatGPTScraper:
         if IS_CLOUD:
             # ── Streamlit Cloud：使用系统 Chromium ──
             self._log("🌐 运行环境: Streamlit Cloud — 使用系统 /usr/bin/chromium")
+            
+            # 复制系统驱动到临时目录，供 uc 打补丁（避免无权限修改 /usr/bin/ 下的文件）
+            import shutil
+            import tempfile
+            temp_dir = tempfile.mkdtemp()
+            writable_driver = os.path.join(temp_dir, "chromedriver")
+            shutil.copy2(_CLOUD_DRIVER, writable_driver)
+            os.chmod(writable_driver, 0o777)
+            
             options.binary_location = _CLOUD_CHROMIUM
-            service = Service(_CLOUD_DRIVER)
+            service = Service(writable_driver)
             driver = uc.Chrome(
                 options=options,
                 service=service,
-                version_main=None,       # 不下载，使用系统驱动
-                driver_executable_path=_CLOUD_DRIVER,
+                version_main=None,       # 不下载，使用拷贝出的系统驱动
+                driver_executable_path=writable_driver,
             )
         else:
             # ── 本地：uc 自动探测已安装的 Chrome/Chromium ──
