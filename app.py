@@ -1,16 +1,3 @@
-"""
-ChatGPT Extract Expert — Bilingual Streamlit Web UI
-=====================================================
-A professional bilingual (Chinese / English) Streamlit app that extracts
-ChatGPT shared conversations into downloadable Markdown files.
-
-Launch:
-    streamlit run app.py
-
-Dependencies:
-    pip install streamlit undetected-chromedriver selenium beautifulsoup4 html2text
-"""
-
 import re
 import time
 from datetime import datetime
@@ -25,531 +12,201 @@ import streamlit as st
 # ─────────────────────────────────────────────────────────────────────
 TRANSLATIONS = {
     "zh": {
-        # ── Page / Meta ──
         "page_title": "ChatGPT 提取专家",
         "main_title": "🤖 ChatGPT 提取专家",
-        "main_caption": "v1.0 · 粘贴分享链接，一键导出 Markdown",
-
-        # ── Sidebar ──
+        "main_caption": "一键转换分享链接为结构化 Markdown | 专业 · 高效 · 简洁",
         "lang_label": "🌐 界面语言",
-        "sidebar_about_title": "📖 关于本工具",
+        "sidebar_guide_title": "💡 运行指南",
+        "sidebar_guide_body": (
+            "1. 粘贴 `chatgpt.com/share/...` 链接\n"
+            "2. 点击「开始提取」，等待进度完成\n"
+            "3. 预览并下载生成的 Markdown 文件\n\n"
+            "**注意：** 雲端運行約需 15-30 秒。"
+        ),
+        "sidebar_about_title": "📖 关于项目",
         "sidebar_about_body": (
-            "**ChatGPT 提取专家**可以将 ChatGPT 的公开分享对话一键转换为结构清晰的 "
-            "Markdown 文件，方便归档、笔记和二次编辑。\n\n"
-            "只需粘贴分享链接，点击提取，即可下载。"
+            "本工具使用 `undetected-chromedriver` 技术绕过 Cloudflare 验证，"
+            "支持代码块、LaTeX 公式及多轮对话的完美还原。"
         ),
         "popover_trigger": "☕ 支持作者 | Support Me",
-        "popover_body": "如果觉得好用，扫码请我喝杯 Kopi O ☕️",
-        "popover_copy_btn": "📋 复制收款账号",
-        "popover_copied": "✅ 已复制到剪贴板！",
-        "payment_account": "601111430735",
-        "sidebar_notes_title": "💡 运行说明",
-        "sidebar_notes_body": (
-            "• 浏览器以无头模式运行\n"
-            "• 完整流程约 15–30 秒\n"
-            "• 需要能访问 chatgpt.com\n"
-            "• 如遇验证失败请稍后重试"
-        ),
-
-        # ── Main Page ──
-        "url_placeholder": "请粘贴 ChatGPT 分享链接，例如：https://chatgpt.com/share/xxxxxxxx",
-        "url_invalid": "⚠️ URL 格式不正确，请确认为 `https://chatgpt.com/share/...` 格式。",
+        "popover_body": "如果覺得好用，可以請我喝杯咖啡 ☕️",
+        "url_placeholder": "请粘贴 ChatGPT 分享链接...",
         "btn_extract": "🚀 开始提取",
-
-        # ── Spinner / Progress ──
-        "spinner_browser": "正在唤醒浏览器...",
-        "spinner_loading": "正在加载页面...",
-        "spinner_parsing": "正在解析对话内容...",
-        "spinner_running": "Chrome 无头浏览器正在运行中...",
-        "log_title": "📋 运行日志",
-
-        # ── Results ──
-        "badge_success": "✅ 提取成功",
-        "badge_error": "❌ 提取失败",
+        "status_start": "正在初始化浏览器...",
+        "status_get": "正在访问目标页面...",
+        "status_wait": "正在等待内容加载...",
+        "status_parse": "正在解析对话内容...",
+        "status_saving": "正在转换 Markdown...",
+        "status_complete": "✅ 提取完成",
+        "status_error": "❌ 提取失败",
         "tab_preview": "📄 Markdown 预览",
-        "tab_source": "📝 源码视图",
-        "tab_download": "⬇️ 文件下载",
-        "btn_download": "⬇️ 下载 Markdown 文件",
-        "error_detail": (
-            "未能提取对话内容，请检查：\n"
-            "1. URL 是否正确且为公开分享链接\n"
-            "2. 网络是否能访问 chatgpt.com\n"
-            "3. 稍后重试以排除临时故障"
-        ),
-
-        # ── Footer ──
+        "tab_download": "⬇️ 下载文件",
+        "btn_download": "⬇️ 点击下载 Markdown 文件",
         "footer": "ChatGPT Extract Expert",
     },
-
     "en": {
-        # ── Page / Meta ──
         "page_title": "ChatGPT Extract Expert",
         "main_title": "🤖 ChatGPT Extract Expert",
-        "main_caption": "v1.0 · Paste a share link, export to Markdown in one click",
-
-        # ── Sidebar ──
+        "main_caption": "Convert share links to structured Markdown | Professional & Efficient",
         "lang_label": "🌐 Language",
-        "sidebar_about_title": "📖 About This Tool",
+        "sidebar_guide_title": "💡 How It Works",
+        "sidebar_guide_body": (
+            "1. Paste a `chatgpt.com/share/...` link\n"
+            "2. Click 'Start Extraction' and wait\n"
+            "3. Preview and download your Markdown\n\n"
+            "**Note:** Cloud execution takes ~15-30s."
+        ),
+        "sidebar_about_title": "📖 About Project",
         "sidebar_about_body": (
-            "**ChatGPT Extract Expert** converts public ChatGPT shared conversations "
-            "into clean, well-structured Markdown files — perfect for archiving, "
-            "note-taking, and editing.\n\n"
-            "Just paste the share link, click extract, and download."
+            "Uses `undetected-chromedriver` to bypass Cloudflare and perfectly "
+            "restores code blocks, LaTeX, and multi-turn conversations."
         ),
         "popover_trigger": "☕ 支持作者 | Support Me",
-        "popover_body": "If you find this useful, scan QR to buy me a Kopi O ☕️",
-        "popover_copy_btn": "📋 Copy Payment Account",
-        "popover_copied": "✅ Copied to clipboard!",
-        "payment_account": "601111430735",
-        "sidebar_notes_title": "💡 How It Works",
-        "sidebar_notes_body": (
-            "• Browser runs in headless mode\n"
-            "• Full process takes ~15–30 seconds\n"
-            "• Requires access to chatgpt.com\n"
-            "• Retry later if verification fails"
-        ),
-
-        # ── Main Page ──
-        "url_placeholder": "Paste your ChatGPT share link, e.g. https://chatgpt.com/share/xxxxxxxx",
-        "url_invalid": "⚠️ Invalid URL format. Please use a `https://chatgpt.com/share/...` link.",
+        "popover_body": "If you find this useful, buy me a coffee ☕️",
+        "url_placeholder": "Paste ChatGPT share link here...",
         "btn_extract": "🚀 Start Extraction",
-
-        # ── Spinner / Progress ──
-        "spinner_browser": "Waking up the browser...",
-        "spinner_loading": "Loading the page...",
-        "spinner_parsing": "Parsing conversation content...",
-        "spinner_running": "Chrome headless browser is running...",
-        "log_title": "📋 Execution Log",
-
-        # ── Results ──
-        "badge_success": "✅ Extraction Successful",
-        "badge_error": "❌ Extraction Failed",
+        "status_start": "Initializing browser...",
+        "status_get": "Accessing page...",
+        "status_wait": "Waiting for content...",
+        "status_parse": "Parsing conversation...",
+        "status_saving": "Converting to Markdown...",
+        "status_complete": "✅ Done",
+        "status_error": "❌ Failed",
         "tab_preview": "📄 Markdown Preview",
-        "tab_source": "📝 Source View",
-        "tab_download": "⬇️ File Download",
+        "tab_download": "⬇️ Download",
         "btn_download": "⬇️ Download Markdown File",
-        "error_detail": (
-            "Failed to extract conversation. Please check:\n"
-            "1. Is the URL correct and a public share link?\n"
-            "2. Can your network reach chatgpt.com?\n"
-            "3. Try again later to rule out temporary issues."
-        ),
-
-        # ── Footer ──
         "footer": "ChatGPT Extract Expert",
     },
 }
 
-
 def t(key: str) -> str:
-    """Return the translated string for the current language."""
     lang = st.session_state.get("lang", "zh")
     return TRANSLATIONS.get(lang, TRANSLATIONS["zh"]).get(key, key)
 
+# ─────────────────────────────────────────────────────────────────────
+#  Page Config & Style
+# ─────────────────────────────────────────────────────────────────────
+st.set_page_config(page_title="ChatGPT Extract Expert", page_icon="🤖", layout="wide")
 
-# ─────────────────────────────────────────────────────────────────────
-#  Page Configuration (MUST be the first Streamlit call)
-# ─────────────────────────────────────────────────────────────────────
-st.set_page_config(
-    page_title="ChatGPT Extract Expert",
-    page_icon="🤖",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
-
-
-# ─────────────────────────────────────────────────────────────────────
-#  Custom CSS — Premium dark-mode styling
-# ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-/* Google Fonts — Inter */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-
-/* ── Gradient Title ── */
 .main-title {
-    background: linear-gradient(135deg, #10a37f 0%, #00d4aa 50%, #0dcf97 100%);
+    background: linear-gradient(135deg, #10a37f 0%, #00d4aa 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-size: 2.6rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 0.15rem;
-    letter-spacing: -0.02em;
+    font-size: 3rem; font-weight: 700; margin-bottom: 0px;
 }
-.sub-title {
-    color: #8e8ea0;
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
-}
-
-/* ── Input Field ── */
-div[data-testid="stTextInput"] input {
-    background: #2f2f2f !important;
-    border: 1px solid #404040 !important;
-    border-radius: 10px !important;
-    color: #ececec !important;
-    font-size: 0.95rem !important;
-    padding: 0.65rem 1rem !important;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
-}
-div[data-testid="stTextInput"] input:focus {
-    border-color: #10a37f !important;
-    box-shadow: 0 0 0 3px rgba(16,163,127,0.18) !important;
-}
-
-/* ── Primary Button ── */
-div[data-testid="stButton"] > button[kind="primary"] {
-    background: linear-gradient(135deg, #10a37f, #0d8f6e) !important;
-    border: none !important;
-    border-radius: 10px !important;
-    color: white !important;
-    font-weight: 600 !important;
-    font-size: 1rem !important;
-    padding: 0.65rem 2rem !important;
-    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
-    width: 100%;
-}
-div[data-testid="stButton"] > button[kind="primary"]:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 24px rgba(16,163,127,0.4) !important;
-}
-
-/* ── Log Console ── */
-.log-console {
-    background: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 10px;
-    padding: 1rem 1.2rem;
-    font-family: 'Menlo', 'Consolas', 'Courier New', monospace;
-    font-size: 0.82rem;
-    color: #a0ffb0;
-    max-height: 240px;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    line-height: 1.65;
-}
-
-/* ── Badges ── */
-.badge-success {
-    display: inline-block;
-    background: rgba(16,163,127,0.15);
-    color: #10a37f;
-    border: 1px solid rgba(16,163,127,0.3);
-    border-radius: 8px;
-    padding: 0.3rem 0.85rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-.badge-error {
-    display: inline-block;
-    background: rgba(239,68,68,0.15);
-    color: #f87171;
-    border: 1px solid rgba(239,68,68,0.3);
-    border-radius: 8px;
-    padding: 0.3rem 0.85rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-/* ── Dividers ── */
-hr { border-color: #333 !important; }
-
-/* ── Sidebar ── */
-section[data-testid="stSidebar"] {
-    background: #1c1c1c !important;
-    border-right: 1px solid #333 !important;
-}
-section[data-testid="stSidebar"] .block-container { padding-top: 2rem; }
-
-/* ── Tabs ── */
-div[data-testid="stTabs"] button[data-baseweb="tab"] {
-    font-weight: 500;
-    font-size: 0.9rem;
-}
-
-/* ── Expander ── */
-details {
-    border: 1px solid #333 !important;
-    border-radius: 10px !important;
-    background: #1e1e1e !important;
-}
-
-/* ── QR Image rounded ── */
-.qr-image img {
-    border-radius: 12px;
-    border: 1px solid #333;
+.sub-title { color: #8e8ea0; font-size: 1.1rem; margin-bottom: 2rem; }
+.stButton > button { border-radius: 8px; font-weight: 600; padding: 0.6rem 2rem; }
+.stDownloadButton > button { 
+    background: #10a37f !important; color: white !important; 
+    border: none !important; width: 100% !important; font-size: 1.2rem !important;
+    padding: 1rem !important; border-radius: 12px !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-
-# ─────────────────────────────────────────────────────────────────────
-#  Session State Initialisation
-# ─────────────────────────────────────────────────────────────────────
-_DEFAULTS = {
-    "lang": "zh",
-    "logs": [],
-    "md_title": "",
-    "md_content": "",
-    "is_running": False,
-    "run_done": False,
-    "run_success": False,
-}
-for _k, _v in _DEFAULTS.items():
-    if _k not in st.session_state:
-        st.session_state[_k] = _v
-
+# ── Init State ──
+for k, v in {"lang": "zh", "logs": [], "result": None, "running": False}.items():
+    if k not in st.session_state: st.session_state[k] = v
 
 # ─────────────────────────────────────────────────────────────────────
 #  Sidebar
 # ─────────────────────────────────────────────────────────────────────
 with st.sidebar:
-    # ── Language Switcher ──
-    lang_options = {"中文": "zh", "English": "en"}
-    selected_label = st.radio(
-        t("lang_label"),
-        options=list(lang_options.keys()),
-        index=0 if st.session_state.lang == "zh" else 1,
-        horizontal=True,
-    )
-    new_lang = lang_options[selected_label]
-    if new_lang != st.session_state.lang:
-        st.session_state.lang = new_lang
-        st.rerun()
+    st.radio(t("lang_label"), ["中文", "English"], 
+             index=0 if st.session_state.lang == "zh" else 1, 
+             on_change=lambda: st.session_state.update({"lang": "zh" if st.session_state.get("lang") == "English" else "en"}),
+             key="lang_radio", horizontal=True)
+    st.session_state.lang = "zh" if st.session_state.lang_radio == "中文" else "en"
 
     st.divider()
-
-    # ── About ──
+    st.markdown(f"### {t('sidebar_guide_title')}")
+    st.info(t("sidebar_guide_body"))
+    
     st.markdown(f"### {t('sidebar_about_title')}")
-    st.markdown(t("sidebar_about_body"))
-
+    st.write(t("sidebar_about_body"))
+    
     st.divider()
-
-    # ── Runtime Notes ──
-    st.markdown(f"### {t('sidebar_notes_title')}")
-    st.markdown(t("sidebar_notes_body"))
-
-    st.divider()
-
-    # ── Support Me — Popover (space-saving) ──
     with st.popover(t("popover_trigger"), use_container_width=True):
-        st.markdown(t("popover_body"))
-
-        qr_path = Path(__file__).parent / "payment.jpeg"
-        if qr_path.exists():
-            st.image(str(qr_path), width=220)
-        else:
-            st.info("📷 `payment.jpeg`")
-
-        account = t("payment_account")
-        st.code(account, language=None)
-        st.markdown(
-            f"""
-            <button onclick="navigator.clipboard.writeText('{account}');
-            this.innerText='""" + t("popover_copied") + """';
-            setTimeout(()=>this.innerText='""" + t("popover_copy_btn") + """',2000)"
-            style="width:100%;padding:0.4rem;border-radius:8px;border:1px solid #444;
-            background:#2a2a2a;color:#ececec;cursor:pointer;font-size:0.85rem;
-            transition:background 0.2s">
-            """ + t("popover_copy_btn") + """
-            </button>
-            """,
-            unsafe_allow_html=True,
-        )
-
+        st.write(t("popover_body"))
+        c1, c2 = st.columns(2)
+        with c1:
+            if Path("payment.jpeg").exists(): st.image("payment.jpeg", caption="DuitNow")
+            else: st.warning("DuitNow QR NA")
+        with c2:
+            if Path("paypal_qr.png").exists(): st.image("paypal_qr.png", caption="PayPal")
+            else: st.warning("PayPal QR NA")
 
 # ─────────────────────────────────────────────────────────────────────
-#  Main Page — Title
+#  Main UI
 # ─────────────────────────────────────────────────────────────────────
-st.markdown(
-    f'<p class="main-title">{t("main_title")}</p>',
-    unsafe_allow_html=True,
-)
-st.caption(t("main_caption"))
-st.divider()
+st.markdown(f'<p class="main-title">{t("main_title")}</p>', unsafe_allow_html=True)
+st.markdown(f'<p class="sub-title">{t("main_caption")}</p>', unsafe_allow_html=True)
 
+url = st.text_input("URL", placeholder=t("url_placeholder"), label_visibility="collapsed")
+valid_url = bool(re.match(r"https://chatgpt\.com/share/[a-zA-Z0-9\-]+", url or ""))
 
-# ─────────────────────────────────────────────────────────────────────
-#  URL Input
-# ─────────────────────────────────────────────────────────────────────
-url_input = st.text_input(
-    label="URL",
-    placeholder=t("url_placeholder"),
-    label_visibility="collapsed",
-)
+if url and not valid_url: st.warning("⚠️ Invalid ChatGPT Share URL")
 
-# Validate URL format
-url_valid = bool(
-    re.match(r"https://chatgpt\.com/share/[a-zA-Z0-9\-]+", url_input or "")
-)
-if url_input and not url_valid:
-    st.warning(t("url_invalid"))
-
-# Extract button
-btn_col, _ = st.columns([2, 5])
+btn_col, _ = st.columns([1, 3])
 with btn_col:
-    run_clicked = st.button(
-        t("btn_extract"),
-        type="primary",
-        disabled=not url_valid or st.session_state.is_running,
-    )
-
+    start_btn = st.button(t("btn_extract"), type="primary", disabled=not valid_url or st.session_state.running)
 
 # ─────────────────────────────────────────────────────────────────────
-#  Scraper Worker (runs in background thread)
+#  Scraper Logic
 # ─────────────────────────────────────────────────────────────────────
-def _run_scraper(url: str, log_queue: Queue) -> None:
-    """Execute the scraper in a daemon thread, streaming logs via Queue."""
+def scraper_worker(url: str, q: Queue):
     try:
         from chatgpt_scraper import ChatGPTScraper
-    except ImportError as e:
-        log_queue.put(("error", f"Import error: {e}"))
-        return
+        scraper = ChatGPTScraper(url=url, headless=True, log_callback=lambda m: q.put(("log", m)))
+        res = scraper.run()
+        q.put(("res", res))
+    except Exception as e:
+        q.put(("log", f"Error: {e}"))
+        q.put(("res", None))
 
-    def cb(msg: str) -> None:
-        log_queue.put(("log", msg))
+if start_btn:
+    st.session_state.running = True
+    st.session_state.result = None
+    q = Queue()
+    t_thread = Thread(target=scraper_worker, args=(url, q), daemon=True)
+    t_thread.start()
 
-    try:
-        scraper = ChatGPTScraper(
-            url=url,
-            headless=True,
-            log_callback=cb,
-        )
-        result = scraper.run()
-
-        if result:
-            title, md_text = result
-            log_queue.put(("result", (title, md_text)))
-        else:
-            log_queue.put(("error", None))
-
-    except Exception as exc:
-        log_queue.put(("log", f"❌ {exc}"))
-        log_queue.put(("error", None))
-
-
-# ─────────────────────────────────────────────────────────────────────
-#  Trigger Extraction
-# ─────────────────────────────────────────────────────────────────────
-if run_clicked and url_valid:
-    # Reset state
-    st.session_state.logs = []
-    st.session_state.md_content = ""
-    st.session_state.md_title = ""
-    st.session_state.run_done = False
-    st.session_state.run_success = False
-    st.session_state.is_running = True
-
-    log_queue: Queue = Queue()
-    thread = Thread(
-        target=_run_scraper,
-        args=(url_input, log_queue),
-        daemon=True,
-    )
-    thread.start()
-
-    # ── Real-time log display ──
-    st.markdown(f"#### {t('log_title')}")
-    log_placeholder = st.empty()
-
-    with st.spinner(t("spinner_running")):
-        while thread.is_alive() or not log_queue.empty():
+    with st.status(t("status_start"), expanded=True) as status:
+        while t_thread.is_alive() or not q.empty():
             try:
-                kind, payload = log_queue.get(timeout=0.3)
-                if kind == "log":
-                    ts = datetime.now().strftime("%H:%M:%S")
-                    st.session_state.logs.append(f"[{ts}] {payload}")
-                elif kind == "result":
-                    st.session_state.md_title, st.session_state.md_content = payload
-                    st.session_state.run_success = True
-                elif kind == "error":
-                    st.session_state.run_success = False
-            except Empty:
-                pass
-
-            # Update the log console
-            log_text = "\n".join(st.session_state.logs[-40:])
-            log_placeholder.markdown(
-                f'<div class="log-console">{log_text}</div>',
-                unsafe_allow_html=True,
-            )
-
-        thread.join()
-
-    st.session_state.is_running = False
-    st.session_state.run_done = True
+                msg_type, data = q.get(timeout=0.1)
+                if msg_type == "log":
+                    st.write(f"`{data}`")
+                    # Update status label based on log content
+                    if "启动 Chrome" in data: status.update(label=t("status_start"))
+                    elif "正在访问" in data: status.update(label=t("status_get"))
+                    elif "等待" in data: status.update(label=t("status_wait"))
+                    elif "发现" in data or "解析" in data: status.update(label=t("status_parse"))
+                    elif "完成" in data: status.update(label=t("status_complete"), state="complete")
+                elif msg_type == "res":
+                    st.session_state.result = data
+            except Empty: pass
+        t_thread.join()
+        if not st.session_state.result:
+            status.update(label=t("status_error"), state="error")
+    st.session_state.running = False
     st.rerun()
 
+# ── Results ──
+if st.session_state.result:
+    title, content = st.session_state.result
+    tab1, tab2 = st.tabs([t("tab_preview"), t("tab_download")])
+    with tab1:
+        st.code(content, language="markdown")
+    with tab2:
+        date_str = datetime.now().strftime("%Y%m%d_%H%M")
+        st.download_button(t("btn_download"), content, 
+                          file_name=f"{re.sub(r'[^\w\-]', '_', title)}_{date_str}.md", 
+                          mime="text/markdown")
 
-# ─────────────────────────────────────────────────────────────────────
-#  Results Display (after extraction completes)
-# ─────────────────────────────────────────────────────────────────────
-if st.session_state.run_done:
-    # ── Show logs ──
-    if st.session_state.logs:
-        st.markdown(f"#### {t('log_title')}")
-        log_text = "\n".join(st.session_state.logs)
-        st.markdown(
-            f'<div class="log-console">{log_text}</div>',
-            unsafe_allow_html=True,
-        )
-        st.markdown("")
-
-    if st.session_state.run_success and st.session_state.md_content:
-        # ── Success Badge ──
-        st.markdown(
-            f'<span class="badge-success">{t("badge_success")}</span>',
-            unsafe_allow_html=True,
-        )
-        st.markdown("")
-
-        # ── Build filename with date ──
-        date_str = datetime.now().strftime("%Y%m%d")
-        download_filename = f"chatgpt_export_{date_str}.md"
-
-        # ── Tabs: Preview / Source / Download ──
-        tab_preview, tab_source, tab_download = st.tabs([
-            t("tab_preview"),
-            t("tab_source"),
-            t("tab_download"),
-        ])
-
-        with tab_preview:
-            st.markdown(st.session_state.md_content, unsafe_allow_html=False)
-
-        with tab_source:
-            st.code(st.session_state.md_content, language="markdown")
-
-        with tab_download:
-            st.markdown("")
-            st.download_button(
-                label=t("btn_download"),
-                data=st.session_state.md_content.encode("utf-8"),
-                file_name=download_filename,
-                mime="text/markdown",
-                use_container_width=True,
-            )
-            st.markdown("")
-            st.info(f"📁 {download_filename}")
-
-    else:
-        # ── Error Badge ──
-        st.markdown(
-            f'<span class="badge-error">{t("badge_error")}</span>',
-            unsafe_allow_html=True,
-        )
-        st.error(t("error_detail"))
-
-
-# ─────────────────────────────────────────────────────────────────────
-#  Footer
-# ─────────────────────────────────────────────────────────────────────
 st.divider()
-st.markdown(
-    f'<div style="text-align:center;color:#555;font-size:0.78rem;padding:0.5rem 0">'
-    f'{t("footer")}'
-    f'</div>',
-    unsafe_allow_html=True,
-)
+st.markdown(f'<div style="text-align:center; color:#555">{t("footer")}</div>', unsafe_allow_html=True)
