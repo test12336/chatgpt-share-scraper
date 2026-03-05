@@ -1,0 +1,6 @@
+streamlit>=1.30.0
+setuptools>=68.0.0
+selenium>=4.15.0
+undetected-chromedriver>=3.5.5
+beautifulsoup4>=4.12.0
+html2text>=2024.2.26
