@@ -11,9 +11,9 @@
   </a>
 </p>
 
-[![Python 3.12+](https://img.shields.io/badge/python-3.12+-3776AB.svg?style=flat-square&logo=python&logoColor=white)]](https://chatgpt-share-scraper-hfj8wccxzappaytn9f6ntip.streamlit.app/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://chatgpt-share-scraper-hfj8wccxzappaytn9f6ntip.streamlit.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-10a37f?style=flat-square)](LICENSE)
-
 ---
 
 [立即试用 Live Demo](https://chatgpt-share-scraper-hfj8wccxzappaytn9f6ntip.streamlit.app/) | [部署说明 Deployment](#-部署说明-deployment) | [免责声明 Disclaimer](#-免责声明-disclaimer)
