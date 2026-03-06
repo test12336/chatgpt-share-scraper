@@ -11,8 +11,7 @@
   </a>
 </p>
 
-[![Python 3.12+](https://img.shields.io/badge/python-3.12+-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://chatgpt-share-scraper-hfj8wccxzappaytn9f6ntip.streamlit.app/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-3776AB.svg?style=flat-square&logo=python&logoColor=white)]](https://chatgpt-share-scraper-hfj8wccxzappaytn9f6ntip.streamlit.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-10a37f?style=flat-square)](LICENSE)
 
 ---
@@ -79,6 +78,7 @@ If you find this tool helpful, feel free to support the developer. Your support 
 - 仅访问 ChatGPT **公开分享**的对话链接，不涉及任何登录或认证操作。/ It only accesses publicly shared ChatGPT links; no login involved.
 - **不存储、不上传、不传输**任何对话数据，所有处理均在本地浏览器会话中完成。/ No data is stored or transmitted. All processing happens locally.
 - 用户有责任确保其使用行为符合 [OpenAI 使用条款](https://openai.com/policies/terms-of-use)。/ Users must comply with OpenAI's Terms of Use.
+
 
 
 
