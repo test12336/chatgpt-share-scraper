@@ -41,7 +41,7 @@
 If you find this tool helpful, feel free to support the developer. Your support keeps this project alive!
 
 <div align="center">
-  <img src="paypal_qr.png" width="280" alt="PayPal QR"/><br>
+  <img src="payment.png" width="280" alt="PayPal QR"/><br>
   <b>🌍 PayPal</b>
 </div>
 
@@ -81,7 +81,5 @@ If you find this tool helpful, feel free to support the developer. Your support 
 - **不存储、不上传、不传输**任何对话数据，所有处理均在本地浏览器会话中完成。/ No data is stored or transmitted. All processing happens locally.
 - 用户有责任确保其使用行为符合 [OpenAI 使用条款](https://openai.com/policies/terms-of-use)。/ Users must comply with OpenAI's Terms of Use.
 
-<div align="center">
-  <sub>Built with ❤️ in Malaysia 🇲🇾</sub>
-</div>
+
 
