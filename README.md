@@ -24,7 +24,7 @@
 
 ## 📸 功能展示 / Showcase
 
-![App Screenshot](screenshot.png)
+![App Screenshot](image.png)
 
 ## ✨ 核心卖点 / Key Features
 
@@ -84,3 +84,4 @@ If you find this tool helpful, feel free to support the developer. Your support 
 <div align="center">
   <sub>Built with ❤️ in Malaysia 🇲🇾</sub>
 </div>
+
