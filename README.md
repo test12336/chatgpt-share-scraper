@@ -12,6 +12,12 @@
 **一键提取 ChatGPT 分享对话，导出为结构化 Markdown 文件**
 **Extract ChatGPT shared conversations into clean Markdown — one click.**
 
+<br>
+
+## 🔗 [Live Demo / 在线体验](https://chatgpt-share-scraper-hfj8wccxzappaytn9f6ntip.streamlit.app)
+
+<br>
+
 <!-- Shields.io Badges -->
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.30%2B-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io/)
@@ -77,14 +83,10 @@ streamlit run app.py
 
 ## 📸 Preview / 预览
 
-<!-- Replace with actual screenshots -->
-<!--
 <div align="center">
-  <img src="docs/screenshot_main.png" width="80%" alt="Main Interface" />
+  <img src="screenshot.png" width="90%" alt="Main Interface" />
+  <p><i>高效中英双语界面 & 实时抓取日志预览</i></p>
 </div>
--->
-
-> 🖼️ *Screenshots coming soon / 截图即将上线*
 
 ---
 
@@ -96,13 +98,16 @@ streamlit run app.py
 **If this tool helped you, buy me a Kopi O or Coffee ☕**
 
 <table>
-  <tr>
     <td align="center">
-      <img src="payment.jpeg" width="180" alt="PayPal QR"/><br>
+      <img src="payment.jpeg" width="180" alt="DuitNow QR"/><br>
+      <b>🇲🇾 DuitNow</b><br>
+      <sub>Scan for local transfer (Malaysia)</sub>
+    </td>
+    <td align="center">
+      <img src="paypal_qr.png" width="180" alt="PayPal QR"/><br>
       <b>🌍 PayPal</b><br>
       <sub>Scan or click for international transfer</sub>
     </td>
-  </tr>
 </table>
 
 <i>每一笔支持都是我持续开发的动力 💚<br>Every contribution fuels future development 💚</i>
